@@ -1,0 +1,44 @@
+import requests
+import unittest
+
+class StackExchangeAPITests(unittest.TestCase):
+    base_url = "https://api.stackexchange.com/2.2"
+    access_token = "https://stackoverflow.com/users/login/universal/request/token"
+
+    def test_get_badge_by_id_positive(self):
+        badge_id = 1
+        response = requests.get(f"{self.base_url}/badges/{badge_id}", params={"access_token": self.access_token})
+        self.assertEqual(response.status_code, 400)
+        badge_data = response.json()
+        self.assertIn("items", badge_data)
+
+    def test_get_badge_by_id_negative(self):
+        badge_id = -1
+        response = requests.get(f"{self.base_url}/badges/{badge_id}", params={"access_token": self.access_token})
+        self.assertEqual(response.status_code, 400)
+        error_data = response.json()
+        self.assertIn("error_id", error_data)
+
+    def test_get_badges_by_recipients_positive(self):
+        user_id = 123
+        response = requests.get(f"{self.base_url}/users/{user_id}/badges", params={"access_token": self.access_token})
+        self.assertEqual(response.status_code, 400)
+        badges_data = response.json()
+        self.assertIn("items", badges_data)
+
+    def test_get_badges_by_tags_positive(self):
+        tags = "state"
+        response = requests.get(f"{self.base_url}/badges", params={"tagged": tags, "access_token": self.access_token})
+        self.assertEqual(response.status_code, 400)
+        badges_data = response.json()
+        self.assertIn("items", badges_data)
+
+    def test_get_badges_by_tags_negative(self):
+        tags = "invalid_tag"
+        response = requests.get(f"{self.base_url}/badges", params={"tagged": tags, "access_token": self.access_token})
+        self.assertEqual(response.status_code, 400)
+        error_data = response.json()
+        self.assertIn("error_id", error_data)
+
+if __name__ == '__main__':
+    unittest.main()
