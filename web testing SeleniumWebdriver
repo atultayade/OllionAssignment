@@ -1,0 +1,43 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+#from selenium.webdriver.common.keys import Keys
+
+driver = webdriver.Chrome()  # You can change to Firefox if needed
+
+driver.get("https://stackoverflow.com/")
+
+#driver.find_element(By.LINK_TEXT, "Browse Questions").click()
+elements = driver.find_elements(By.XPATH, "//*[@class='s-topbar--menu-btn js-left-sidebar-toggle']")
+
+# Find and click on "Users" in the left section
+driver.find_element(By.LINK_TEXT, "users").click()
+# Find and click on "Editors"
+driver.find_element(By.LINK_TEXT, "editors").click()
+
+# Find all user elements on the second page (pagination)
+user_elements = driver.find_elemets(By.XPATH, "//div[@class='user-details']/a")
+edit_count_elements = driver.find_elements(By.XPATH, "//div[@class='user-details']/span[@class='reputation-score']")
+
+# Initialize variables to keep track of the user with the max edits
+max_user = ""
+max_location = ""
+max_edits = 0
+
+# Iterate through the users and find the one with the most edits
+for i in range(len(user_elements)):
+    user = user_elements[i].text
+    location = user_elements[i].get_attribute("title")
+    edits = int(edit_count_elements[i].text.replace("k", "000").replace("m", "000000").replace(",", ""))
+
+    if edits > max_edits:
+        max_user = user
+        max_location = location
+        max_edits = edits
+
+# Print the user with the max edits
+print("User name:", max_user)
+print("Location:", max_location)
+print("Edits Count:", max_edits)
+
+# Close the browser
+driver.close()
