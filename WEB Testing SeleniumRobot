@@ -1,0 +1,46 @@
+
+*** Settings ***
+Library           SeleniumLibrary
+
+*** Variables ***
+${url}   https://stackoverflow.com/
+
+*** Keywords ***
+Open the Stack browser and hit url
+    [Documentation]  Verify the Stack browser and Check USER & Tab editor
+    Open Browser                   ${url}  chrome
+    element should be visible      //*[@class="s-topbar--menu-btn js-left-sidebar-toggle"]
+    Click element                  //*[@class="s-topbar--menu-btn js-left-sidebar-toggle"]
+    element should be visible      //*[@href="/users"]
+    Click Link                     //*[@href="/users"]
+    element should be visible      //*[@href="/users?tab=editors"]
+    Click Link                     //*[@href="/users?tab=editors"]
+    Capture Page Screenshot
+
+Usres details screen after click on Editor Tab
+    [Documentation]  validate the Usres details on USERS Tab
+    Wait Until Keyword Succeeds      2min    10s   Wait Until Element Is Visible   //div[@class="user-details"]
+    ${selected Page1}     get text   //*[@class="s-pagination--item is-selected"]
+    ${selected Page2}     get text    (//*[@title="Go to page 2"])[1]
+    Click element                     (//*[@title="Go to page 2"])[1]
+    element should be visible         (//div[@class="user-details"]//following-sibling::a)[1]
+    ${userDetails}     get text       (//div[@class="user-details"]//following-sibling::a)[1]
+    Log     ${userDetails}
+    element should be visible         (//div[@class="user-details"]//following-sibling::span)[1]
+    ${LocDetails}     get text        (//div[@class="user-details"]//following-sibling::span)[1]
+    Log   ${LocDetails}
+    ${editsDetails}     get text      (//div[@class="user-details"]//following-sibling::div)[1]
+    Log   ${editsDetails}
+    Capture Page Screenshot
+
+
+
+*** Test Cases ***
+Open StackOverflow and Get User With Max Edits
+    [Documentation]  Validate user name which has the max number of edits count on the second page
+    Open the Stack browser and hit url
+    Usres details screen after click on Editor Tab
+    Close Browser
+
+####EXECUTION COMMAND-    robot -d Result test1.robot{file path}
+#Output will generate in Result folder.
